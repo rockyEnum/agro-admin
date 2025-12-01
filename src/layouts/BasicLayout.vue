@@ -1,32 +1,52 @@
 <template>
   <a-layout class="layout-container">
     <!-- 左侧菜单 -->
-    <a-layout-sider
+  <a-layout-sider
       v-model:collapsed="collapsed"
       :trigger="null"
       collapsible
       theme="light"
+      :collapsed-width="60"
       class="layout-sider"
     >
       <div class="logo">
-        <h2 v-if="!collapsed">Agro Admin</h2>
-        <h2 v-else>A</h2>
+        <SvgIcon name="logo" width="38" height="38" />
       </div>
       <a-menu
         v-model:selectedKeys="selectedKeys"
         v-model:openKeys="openKeys"
         mode="inline"
         theme="light"
-        :items="menuItems"
         @click="handleMenuClick"
-      />
+      >
+        <a-menu-item
+          v-for="item in menuItems"
+          :key="item.key"
+          class="menu-item"
+        >
+          <template #icon>
+            <img
+              v-if="item.iconType === 'img'"
+              :src="item.icon"
+              alt=""
+              class="menu-icon-img"
+            />
+            <SvgIcon
+              v-else
+              :name="item.icon"
+              width="18"
+              height="18"
+            />
+          </template>
+          {{ item.label }}
+        </a-menu-item>
+      </a-menu>
     </a-layout-sider>
 
     <a-layout>
       <!-- 右上头部 -->
       <a-layout-header
         class="layout-header"
-        :style="{ left: collapsed ? '80px' : '200px' }"
       >
         <div class="header-left">
           <menu-unfold-outlined
@@ -71,7 +91,6 @@
       <!-- 右下内容区域 -->
       <a-layout-content
         class="layout-content"
-        :style="{ marginLeft: collapsed ? '80px' : '200px' }"
       >
         <div class="content-wrapper">
           <router-view />
@@ -82,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, h } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
   MenuFoldOutlined,
@@ -90,39 +109,54 @@ import {
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
-  DownOutlined,
-  DashboardOutlined
+  DownOutlined
 } from '@ant-design/icons-vue'
 import type { MenuProps } from 'ant-design-vue'
+import SvgIcon from '@/components/SvgIcon.vue'
+import caidan4 from '@/assets/caidan4.png'
+
 
 const router = useRouter()
 const route = useRoute()
 
-const collapsed = ref(false)
+const collapsed = ref(true)
 const selectedKeys = ref<string[]>([])
 const openKeys = ref<string[]>([])
 
 // 菜单项配置
-const menuItems = computed<MenuProps['items']>(() => [
+const menuItems =  [
   {
-    key: '/dashboard',
-    icon: () => h(DashboardOutlined),
+    key: '/',
+    icon:    'home',
+    label: '首页',
+    title: '首页'
+  },
+  {
+    key: '/dashboard1',
+    icon:    'caidan1',
     label: '仪表盘',
     title: '仪表盘'
   },
   {
-    key: '/users',
-    icon: () => h(UserOutlined),
-    label: '用户管理',
-    title: '用户管理'
+    key: '/dashboard2',
+    icon:    'caidan2',
+    label: '仪表盘',
+    title: '仪表盘'
   },
   {
-    key: '/settings',
-    icon: () => h(SettingOutlined),
-    label: '系统设置',
-    title: '系统设置'
-  }
-])
+    key: '/dashboard3',
+    icon:    'caidan3',
+    label: '仪表盘',
+    title: '仪表盘'
+  },
+  {
+    key: '/dashboard4',
+    icon:    caidan4,
+    iconType: 'img',
+    label: '仪表盘',
+    title: '仪表盘'
+  },
+]
 
 // 监听路由变化，更新选中的菜单项
 watch(
@@ -148,18 +182,13 @@ const handleMenuClick: MenuProps['onClick'] = (e) => {
 .layout-sider {
   overflow: auto;
   height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
   box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
-
+  width: 60px;
   .logo {
     height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid #f0f0f0;
 
     h2 {
       margin: 0;
@@ -171,19 +200,14 @@ const handleMenuClick: MenuProps['onClick'] = (e) => {
 }
 
 .layout-header {
-  background: #fff;
-  padding: 0 24px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 2px 8px 0 rgba(29, 35, 41, 0.05);
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 1;
   transition: left 0.2s;
   height: 64px;
-
+  background: transparent;
   .header-left {
     display: flex;
     align-items: center;
@@ -191,7 +215,6 @@ const handleMenuClick: MenuProps['onClick'] = (e) => {
     .trigger {
       font-size: 18px;
       line-height: 64px;
-      padding: 0 24px;
       cursor: pointer;
       transition: color 0.3s;
 
@@ -221,19 +244,30 @@ const handleMenuClick: MenuProps['onClick'] = (e) => {
 }
 
 .layout-content {
-  margin-top: 64px;
-  transition: margin-left 0.2s;
-  overflow: auto;
   background: #f0f2f5;
   min-height: calc(100vh - 64px);
-
   .content-wrapper {
-    margin: 24px;
+    margin:0 16px 16px;
     padding: 24px;
     background: #fff;
-    min-height: calc(100vh - 112px);
+    height: calc(100vh - 80px);
     border-radius: 4px;
+    overflow: auto;
   }
 }
+
+.menu-icon-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* 覆盖 a-menu-item 的 padding，需要用 :deep 逃出 scoped */
+:deep(.menu-item) {
+  // padding: 11px !important;
+}
+
 </style>
 

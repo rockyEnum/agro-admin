@@ -1,13 +1,15 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { resolve } from 'node:path'
-import { fileURLToPath, URL } from 'node:url'
+import svgLoader from 'vite-svg-loader'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    svgLoader({ svgo: true })
+  ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': '/src'
     }
   },
   server: {
@@ -15,4 +17,3 @@ export default defineConfig({
     open: true
   }
 })
-
