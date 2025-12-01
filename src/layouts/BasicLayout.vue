@@ -248,7 +248,7 @@ const handleMenuClick: MenuProps['onClick'] = (e) => {
   min-height: calc(100vh - 64px);
   .content-wrapper {
     margin:0 16px 16px;
-    padding: 24px;
+    // padding: 24px;
     background: #fff;
     height: calc(100vh - 80px);
     border-radius: 4px;
