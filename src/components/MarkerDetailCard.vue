@@ -49,7 +49,6 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { WifiOutlined } from "@ant-design/icons-vue";
 import type { MarkerDetail } from "@/types/marker";
 import SvgIcon from "@/components/SvgIcon.vue";
 
