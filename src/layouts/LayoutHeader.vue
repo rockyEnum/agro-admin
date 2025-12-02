@@ -23,9 +23,12 @@
         v-model:open="chartVisible"
         :footer="null"
         width="960px"
+       
         destroyOnClose
         centered
-        title="YoMi 助理"
+        :title="null"
+          wrapClassName="chart-modal"
+          :bodyStyle="{ height: '100%' }"
       >
         <Chart />
       </a-modal>
@@ -86,6 +89,15 @@ const handleToggle = () => {
 </script>
 
 <style scoped lang="less">
+:global(.chart-modal .ant-modal-content) {
+  padding: 0;
+  height: 658px;
+}
+:global(.chart-modal .ant-modal-header) {
+  padding: 16px;
+  border-bottom: 1px solid #edf1f5;
+  margin-bottom: 0;
+}
 .layout-header {
   padding: 0 16px;
   display: flex;

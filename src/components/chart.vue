@@ -3,7 +3,7 @@
     <!-- 左侧：推荐话术 + 搜索 -->
     <div class="yomi-panel">
       <!-- 搜索框（Ant Design Vue） -->
-      <a-input-search
+      <a-input
         v-model:value="keyword"
         class="yomi-search-input"
         placeholder="按关键字进行搜索"
@@ -12,18 +12,15 @@
         :allow-clear="true"
       >
         <template #suffix>
-          <SearchOutlined class="yomi-search-icon" @click="onSearch" />
+          <SvgIcon name="search" />
         </template>
-      </a-input-search>
-
+      </a-input>
       <!-- 内容区域 -->
       <div class="yomi-content">
-        <a-card :bordered="false" class="yomi-card" body-style="{ padding: '8px 8px 12px' }">
+        <div :bordered="false" class="yomi-card" body-style="{ padding: '8px 8px 12px' }">
           <!-- 头像 & 名称 -->
           <div class="yomi-header">
-            <a-avatar class="yomi-avatar">
-              <div class="yomi-avatar-inner"></div>
-            </a-avatar>
+             <img :src="chartImg" alt="chart" class="chart-icon">
             <div class="yomi-title">YoMi</div>
           </div>
 
@@ -47,7 +44,7 @@
               </a-button>
             </div>
           </div>
-        </a-card>
+        </div>
       </div>
     </div>
 
@@ -55,18 +52,13 @@
     <div class="yomi-chat">
       <div class="yomi-chat-header">
         <div class="yomi-chat-title">
-          <MenuOutlined class="yomi-chat-menu" />
+          <SvgIcon  name="expand"/>
           <span>YoMi</span>
         </div>
-        <CloseOutlined class="yomi-chat-close" />
       </div>
 
       <div class="yomi-chat-body">
-        <div class="yomi-chat-avatar-wrapper">
-          <a-avatar class="yomi-chat-avatar" :size="100">
-            <div class="yomi-chat-avatar-inner"></div>
-          </a-avatar>
-        </div>
+        <img :src="chartLargeImg" alt="chart" class="chart-icon">
         <div class="yomi-chat-hi">Hi, Admin</div>
       </div>
 
@@ -104,14 +96,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import {
-  SearchOutlined,
   MoreOutlined,
-  MenuOutlined,
-  CloseOutlined,
   PaperClipOutlined,
   ExperimentOutlined,
   SendOutlined
 } from '@ant-design/icons-vue'
+import SvgIcon from '@/components/SvgIcon.vue'
+import chartImg from '@/assets/chart.png'
+import chartLargeImg from '/chart-large.png'
 
 const keyword = ref('')
 const message = ref('')
@@ -125,7 +117,6 @@ const onSearch = () => {
 <style scoped>
 .yomi-layout {
   display: flex;
-  gap: 16px;
   width: 100%;
   height: 100%;
 }
@@ -137,29 +128,21 @@ const onSearch = () => {
   background: #ebeef5;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   border-radius: 0;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
 }
 
 .yomi-search-input {
-  margin-bottom: 8px;
+  border-radius: 8px;
+  padding-right: 4px;
+
 }
 
-/* 覆盖 Antd 的搜索输入样式，使其更接近设计 */
-.yomi-panel :deep(.ant-input-search) {
-  border-radius: 999px;
-}
+ 
+ 
 
-.yomi-panel :deep(.ant-input-affix-wrapper) {
-  border-radius: 999px;
-  border-color: #ebeef5;
-  background: #ffffff;
-  box-shadow: none;
-}
-
-.yomi-panel :deep(.ant-input-affix-wrapper-focused) {
-  box-shadow: 0 0 0 1px rgba(64, 150, 255, 0.4);
-}
+ 
 
 .yomi-panel :deep(.ant-input) {
   font-size: 14px;
@@ -177,7 +160,6 @@ const onSearch = () => {
 }
 
 .yomi-content {
-  margin-top: 8px;
   padding: 0 0 12px;
   border-radius: 8px;
   overflow: hidden;
@@ -192,16 +174,11 @@ const onSearch = () => {
   align-items: center;
   gap: 8px;
   padding: 8px;
+  margin: 12px 0;
 }
 
 .yomi-avatar {
-  width: 40px !important;
-  height: 40px !important;
-  border-radius: 50% !important;
-  background: radial-gradient(circle at 30% 20%, #a9d5ff 0%, #3f69ff 50%, #5b2cff 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+ 
 }
 
 .yomi-avatar-inner {
@@ -220,8 +197,6 @@ const onSearch = () => {
 .yomi-messages {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 0 8px 0;
 }
 
 .yomi-message {
@@ -307,29 +282,15 @@ const onSearch = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  margin-top: 120px;
   gap: 16px;
+  .chart-icon{
+    width: 100px;
+    height: 100px;
+  }
 }
 
-.yomi-chat-avatar-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.yomi-chat-avatar {
-  background: radial-gradient(circle at 30% 20%, #a9d5ff 0%, #3f69ff 50%, #5b2cff 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.yomi-chat-avatar-inner {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-}
+ 
 
 .yomi-chat-hi {
   font-size: 16px;
