@@ -38,32 +38,12 @@
           @click="toggleCategory(index)"
         >
           <span class="arrow-icon" :class="{ expanded: category.expanded }">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M3 6l6 0" v-if="!category.expanded"></path>
-              <path d="M6 3l0 6" v-if="category.expanded"></path>
-              <path d="M3 6l6 0" v-if="category.expanded"></path>
-            </svg>
+             <SvgIcon name="arrow-right" />
           </span>
-          <span class="folder-icon">📁</span>
+          <span class="folder-icon"> <SvgIcon name="folder" /></span>
           <span class="category-name">{{ category.name }}</span>
           <span class="more-icon" @click.stop="handleMore(category)">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-            >
-              <circle cx="4" cy="8" r="1"></circle>
-              <circle cx="8" cy="8" r="1"></circle>
-              <circle cx="12" cy="8" r="1"></circle>
-            </svg>
+             <SvgIcon name="more" />
           </span>
         </div>
 
@@ -76,19 +56,7 @@
             @click="handleItemClick(item)"
           >
             <span class="item-icon">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-                <path d="M3 9h18"></path>
-                <path d="M9 3v18"></path>
-                <circle cx="15" cy="12" r="2"></circle>
-              </svg>
+                <SvgIcon name="device" />
             </span>
             <span class="item-name">{{ item.name }}</span>
           </div>
@@ -100,7 +68,7 @@
 
 <script lang="ts" setup>
 import { ref, computed } from "vue";
-
+import SvgIcon from "@/components/SvgIcon.vue";
 // 定义类型
 interface CategoryItem {
   name: string;
@@ -233,8 +201,8 @@ const handleItemClick = (item: CategoryItem) => {
 <style scoped>
 .map-sidebar {
   position: absolute;
-  left: 20px;
-  top: 20px;
+  left: 12px;
+  top: 12px;
   width: 320px;
   max-height: calc(100vh - 40px);
   background: white;
@@ -299,6 +267,7 @@ const handleItemClick = (item: CategoryItem) => {
   flex: 1;
   overflow-y: auto;
   padding: 8px 0;
+  max-height: calc(100vh - 180px);
 }
 
 .category-item {
@@ -352,8 +321,8 @@ const handleItemClick = (item: CategoryItem) => {
 }
 
 .more-icon {
-  width: 20px;
-  height: 20px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;

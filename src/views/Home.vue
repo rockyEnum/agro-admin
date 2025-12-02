@@ -15,26 +15,52 @@
         :key="index"
         :position="marker.position"
         :icon="marker.icon"
-        @click="openInfoWindow(marker)"
-      />
-      
-      <!-- 信息弹出窗口 -->
-      <tdt-infowindow
-        v-if="infoWindow.visible"
-        :target="infoWindow.position"
-        :content="infoWindow.content"
-        @close="closeInfoWindow"
+        
+        @click="openMarkerModal(marker)"
       />
     </tdt-map>
+
+    <a-modal
+      v-model:open="modal.visible"
+      :title="null"
+      :footer="null"
+      :destroyOnClose="true"
+      :maskClosable="true"
+      width="420px"
+      :bodyStyle="{ padding: 0 }"
+      @cancel="closeModal"
+    >
+      <MarkerDetailCard
+        v-if="selectedMarker"
+        :data="selectedMarker.data"
+      />
+    </a-modal>
+    
+    <!-- 地图右上角图标 -->
+    <div class="map-top-right-icons">
+      <img src="@/assets/camera.png" alt="相机" class="icon-item" />
+      <img src="@/assets/sensor-grey.png" alt="传感器" class="icon-item" />
+      <img src="@/assets/marker-pos.png" alt="标记位置" class="icon-item" />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
 import MapSidebar from "@/components/MapSidebar.vue";
+import MarkerDetailCard from "@/components/MarkerDetailCard.vue";
 import errorIcon from "@/assets/error.png";
 import sensorIcon from "@/assets/sensor-success.png";
 import solarIcon from "@/assets/solar-success.png";
+import type { MarkerDetail } from "@/types/marker";
+
+type Marker = {
+  position: [number, number];
+  icon: string;
+  title: string;
+  iconSize?: [number, number];
+  data: MarkerDetail;
+};
 
 const state = reactive({
   center: [113.280637, 23.125178],
@@ -43,109 +69,94 @@ const state = reactive({
 });
 
 // 标记点数据
-const markers = ref([
+const markers = ref<Marker[]>([
   {
     position: [113.280637, 23.125178] as [number, number],
     icon: sensorIcon,
     title: "传感器节点",
-    content: `
-      <div style="padding: 0px;">
-        <h3 style="margin: 0 0 10px 0;">传感器节点</h3>
-        <p><strong>节点编码:</strong> 21100000008-1N</p>
-        <p><strong>节点类型:</strong> DATA</p>
-        <p><strong>状态:</strong> <span style="color: green;">正常</span></p>
-        <p><strong>最后上报时间:</strong> 2024-09-27 03:49:57</p>
-        <p><strong>传感器配置:</strong></p>
-        <ul style="margin: 5px 0; padding-left: 20px;">
-          <li>已绑定: 14</li>
-          <li>正常: 13</li>
-          <li>异常: 1</li>
-        </ul>
-      </div>
-    `
+    iconSize: [24, 27],
+    data: {
+      name: "Node one",
+      nodeCode: "21100000008-1N",
+      nodeType: "DATA",
+      status: "online",
+      lastReportTime: "2024-09-27 03:49:57",
+      stats: { total: 14, normal: 13, abnormal: 1 }
+    }
   },
   {
     position: [113.285637, 23.130178] as [number, number],
     icon: solarIcon,
     title: "太阳能温室",
     iconSize: [24, 27],
-    content: `
-      <div style="padding: 0px;">
-        <h3 style="margin: 0 0 10px 0;">太阳能温室</h3>
-        <p><strong>节点编码:</strong> 21100000008-2N</p>
-        <p><strong>节点类型:</strong> SOLAR</p>
-        <p><strong>状态:</strong> <span style="color: green;">在线</span></p>
-        <p><strong>发电功率:</strong> 2.5kW</p>
-        <p><strong>电池电量:</strong> 85%</p>
-      </div>
-    `
+    data: {
+      name: "Solar Hub A",
+      nodeCode: "21100000008-2N",
+      nodeType: "SOLAR",
+      status: "online",
+      lastReportTime: "2024-09-27 03:40:21",
+      stats: { total: 6, normal: 6, abnormal: 0 }
+    }
   },
   {
     position: [113.275637, 23.120178] as [number, number],
     icon: errorIcon,
     title: "故障节点",
     iconSize: [24, 27],
-    content: `
-      <div style="padding: 0px;">
-        <h3 style="margin: 0 0 10px 0;">故障节点</h3>
-        <p><strong>节点编码:</strong> 21100000008-3N</p>
-        <p><strong>节点类型:</strong> DATA</p>
-        <p><strong>状态:</strong> <span style="color: red;">异常</span></p>
-        <p><strong>故障信息:</strong> 传感器连接超时</p>
-        <p><strong>最后上报时间:</strong> 2024-09-27 02:30:15</p>
-      </div>
-    `
+    data: {
+      name: "Node alert",
+      nodeCode: "21100000008-3N",
+      nodeType: "DATA",
+      status: "error",
+      lastReportTime: "2024-09-27 02:30:15",
+      stats: { total: 12, normal: 9, abnormal: 3 }
+    }
   },
   {
     position: [113.290637, 23.135178] as [number, number],
     icon: sensorIcon,
     iconSize: [24, 27],
     title: "传感器节点2",
-    content: `
-      <div style="padding: 0px;">
-        <h3 style="margin: 0 0 10px 0;">传感器节点2</h3>
-        <p><strong>节点编码:</strong> 21100000008-4N</p>
-        <p><strong>节点类型:</strong> DATA</p>
-        <p><strong>状态:</strong> <span style="color: green;">正常</span></p>
-        <p><strong>最后上报时间:</strong> 2024-09-27 03:50:20</p>
-      </div>
-    `
+    data: {
+      name: "Node two",
+      nodeCode: "21100000008-4N",
+      nodeType: "DATA",
+      status: "online",
+      lastReportTime: "2024-09-27 03:50:20",
+      stats: { total: 10, normal: 10, abnormal: 0 }
+    }
   },
   {
     position: [113.270637, 23.115178] as [number, number],
     icon: solarIcon,
     title: "太阳能温室2",
     iconSize: [24, 27],
-    content: `
-      <div style="padding: 0px;">
-        <h3 style="margin: 0 0 10px 0;">太阳能温室2</h3>
-        <p><strong>节点编码:</strong> 21100000008-5N</p>
-        <p><strong>节点类型:</strong> SOLAR</p>
-        <p><strong>状态:</strong> <span style="color: green;">在线</span></p>
-        <p><strong>发电功率:</strong> 3.2kW</p>
-        <p><strong>电池电量:</strong> 92%</p>
-      </div>
-    `
+    data: {
+      name: "Solar Hub B",
+      nodeCode: "21100000008-5N",
+      nodeType: "SOLAR",
+      status: "offline",
+      lastReportTime: "2024-09-27 01:15:42",
+      stats: { total: 5, normal: 4, abnormal: 1 }
+    }
   }
 ]);
 
-// 信息窗口状态
-const infoWindow = reactive({
-  visible: false,
-  position: null as [number, number] | null,
-  content: ""
+const selectedMarker = ref<Marker | null>(null);
+const modal = reactive({
+  visible: false
 });
 
-// 打开信息窗口
-const openInfoWindow = (marker: typeof markers.value[0]) => {
-  infoWindow.position = marker.position;
-  infoWindow.content = marker.content;
-  infoWindow.visible = true;
+// 打开弹窗
+const openMarkerModal = (marker: Marker) => {
+  selectedMarker.value = marker;
+  modal.visible = true;
 };
 
-// 关闭信息窗口
-const closeInfoWindow = () => {
-  infoWindow.visible = false;
+// 关闭弹窗
+const closeModal = () => {
+  modal.visible = false;
+  selectedMarker.value = null;
 };
 
 // 处理列表项点击
@@ -168,7 +179,37 @@ export default { name: "Home" };
 <style scoped>
 .mapDiv {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   position: relative;
 }
+
+.map-top-right-icons {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.icon-item {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.icon-item:hover {
+  transform: scale(1.1);
+}
+
+.modal-body {
+  font-size: 14px;
+  color: #444;
+}
+:deep(.tdt-bottom) {
+  display: none;
+}
 </style>
+ 
