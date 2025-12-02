@@ -42,6 +42,14 @@
       <MarkerDetailCard v-if="selectedMarker" :data="selectedMarker.data" />
     </a-modal>
 
+    <!-- 区域详情弹窗（带折线图） -->
+    <RegionDetailModal
+      v-model:open="regionModalOpen"
+      :title="regionTitle"
+      :xData="regionChartX"
+      :yData="regionChartY"
+    />
+
     <!-- 地图右上角图标 -->
     <div class="map-top-right-icons">
       <img src="@/assets/camera.png" alt="相机" class="icon-item" />
@@ -55,6 +63,7 @@
 import { reactive, ref } from "vue";
 import MapSidebar from "@/components/MapSidebar.vue";
 import MarkerDetailCard from "@/components/MarkerDetailCard.vue";
+import RegionDetailModal from "@/components/RegionDetailModal.vue";
 import errorIcon from "@/assets/error.png";
 import sensorIcon from "@/assets/sensor-success.png";
 import solarIcon from "@/assets/solar-success.png";
@@ -185,15 +194,34 @@ const modal = reactive({
   visible: false,
 });
 
+// 区域弹窗数据
+const regionModalOpen = ref(false);
+const regionChartX = ref<(string | number)[]>([
+  "Jan 1",
+  "Jan 5",
+  "Jan 9",
+  "Jan 13",
+  "Jan 17",
+  "Jan 21",
+  "Jan 25",
+  "Jan 29"
+]);
+const regionChartY = ref<number[]>([30, 32, 34, 36, 37, 38, 40, 42]);
+const regionTitle = ref("4号地");
+
 // 打开弹窗
 const openMarkerModal = (marker: Marker) => {
   selectedMarker.value = marker;
   modal.visible = true;
 };
 
-// 点击区域时，打开关联节点详情
+// 点击区域时，打开区域分析弹窗
 const openRegionModal = (region: Region) => {
-  
+  const marker = markers.value[region.targetIndex];
+  if (marker) {
+    regionTitle.value = marker.data.name || "区域详情";
+  }
+  regionModalOpen.value = true;
 };
 
 // 关闭弹窗

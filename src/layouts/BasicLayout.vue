@@ -45,48 +45,10 @@
 
     <a-layout>
       <!-- 右上头部 -->
-      <a-layout-header
-        class="layout-header"
-      >
-        <div class="header-left">
-          <menu-unfold-outlined
-            v-if="collapsed"
-            class="trigger"
-            @click="() => (collapsed = !collapsed)"
-          />
-          <menu-fold-outlined
-            v-else
-            class="trigger"
-            @click="() => (collapsed = !collapsed)"
-          />
-        </div>
-        <div class="header-right">
-          <a-dropdown>
-            <a class="ant-dropdown-link" @click.prevent>
-              <user-outlined />
-              <span class="username">管理员</span>
-              <down-outlined />
-            </a>
-            <template #overlay>
-              <a-menu>
-                <a-menu-item key="profile">
-                  <user-outlined />
-                  个人中心
-                </a-menu-item>
-                <a-menu-item key="settings">
-                  <setting-outlined />
-                  设置
-                </a-menu-item>
-                <a-menu-divider />
-                <a-menu-item key="logout">
-                  <logout-outlined />
-                  退出登录
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
-        </div>
-      </a-layout-header>
+      <LayoutHeader
+        :collapsed="collapsed"
+        @toggle="collapsed = !collapsed"
+      />
 
       <!-- 右下内容区域 -->
       <a-layout-content
@@ -103,16 +65,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  UserOutlined,
-  SettingOutlined,
-  LogoutOutlined,
-  DownOutlined
-} from '@ant-design/icons-vue'
 import type { MenuProps } from 'ant-design-vue'
 import SvgIcon from '@/components/SvgIcon.vue'
+import LayoutHeader from './LayoutHeader.vue'
 import caidan4 from '@/assets/caidan4.png'
 
 
@@ -161,14 +116,16 @@ const menuItems =  [
 // 监听路由变化，更新选中的菜单项
 watch(
   () => route.path,
-  (path) => {
+  (path: string) => {
     selectedKeys.value = [path]
   },
   { immediate: true }
 )
 
+type MenuClickEvent = Parameters<NonNullable<MenuProps['onClick']>>[0]
+
 // 菜单点击处理
-const handleMenuClick: MenuProps['onClick'] = (e) => {
+const handleMenuClick = (e: MenuClickEvent) => {
   router.push(e.key as string)
 }
 </script>
@@ -199,50 +156,6 @@ const handleMenuClick: MenuProps['onClick'] = (e) => {
   }
 }
 
-.layout-header {
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 8px 0 rgba(29, 35, 41, 0.05);
-  transition: left 0.2s;
-  height: 64px;
-  background: transparent;
-  .header-left {
-    display: flex;
-    align-items: center;
-
-    .trigger {
-      font-size: 18px;
-      line-height: 64px;
-      cursor: pointer;
-      transition: color 0.3s;
-
-      &:hover {
-        color: #1890ff;
-      }
-    }
-  }
-
-  .header-right {
-    .ant-dropdown-link {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: rgba(0, 0, 0, 0.85);
-      cursor: pointer;
-
-      .username {
-        margin: 0 4px;
-      }
-
-      &:hover {
-        color: #1890ff;
-      }
-    }
-  }
-}
-
 .layout-content {
   background: #f0f2f5;
   min-height: calc(100vh - 64px);
@@ -262,11 +175,6 @@ const handleMenuClick: MenuProps['onClick'] = (e) => {
   object-fit: contain;
   display: inline-block;
   vertical-align: middle;
-}
-
-/* 覆盖 a-menu-item 的 padding，需要用 :deep 逃出 scoped */
-:deep(.menu-item) {
-  // padding: 11px !important;
 }
 
 </style>
