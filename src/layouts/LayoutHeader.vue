@@ -13,7 +13,22 @@
       />
     </div>
     <div class="header-right">
-       <img :src="chartImg" alt="">
+      <img
+        :src="chartImg"
+        alt="chart"
+        class="chart-icon"
+        @click="chartVisible = true"
+      >
+      <a-modal
+        v-model:open="chartVisible"
+        :footer="null"
+        width="960px"
+        destroyOnClose
+        centered
+        title="YoMi 助理"
+      >
+        <Chart />
+      </a-modal>
       <a-dropdown>
         <a class="ant-dropdown-link" @click.prevent>
           <user-outlined />
@@ -43,7 +58,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import chartImg from '@/assets/chart.png'
+import Chart from '@/components/chart.vue'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -60,6 +77,8 @@ defineProps<{
 const emit = defineEmits<{
   (e: "toggle"): void;
 }>();
+
+const chartVisible = ref(false)
 
 const handleToggle = () => {
   emit("toggle");
@@ -96,6 +115,11 @@ const handleToggle = () => {
     display: flex;
     align-items: center;
     gap: 20px;
+    .chart-icon {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
     .ant-dropdown-link {
       display: flex;
       align-items: center;
