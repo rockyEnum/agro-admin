@@ -82,15 +82,16 @@ const openKeys = ref<string[]>([])
 const menuItems =  [
   {
     key: '/',
-    icon:    'home',
+    icon: 'home',
     label: '首页',
     title: '首页'
   },
+ 
   {
-    key: '/dashboard1',
-    icon:    'caidan1',
-    label: '仪表盘',
-    title: '仪表盘'
+    key: '/analysis',
+    icon: 'caidan1',
+    label: '数据分析',
+    title: '数据分析'
   },
   {
     key: '/dashboard2',
@@ -106,10 +107,10 @@ const menuItems =  [
   },
   {
     key: '/chat',
-    icon:    caidan4,
+    icon: caidan4,
     iconType: 'img',
-    label: 'ai助手',
-    title: 'ai助手'
+    label: 'AI 助手',
+    title: 'AI 助手'
   },
 ]
 

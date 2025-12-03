@@ -17,11 +17,11 @@ const routes: RouteRecordRaw[] = [
         }
       },
       {
-        path: 'dashboard',
-        name: 'Dashboard',
-        component: () => import('@/views/Dashboard.vue'),
+        path: 'analysis',
+        name: 'DataAnalysis',
+        component: () => import('@/views/DataAnalysis.vue'),
         meta: {
-          title: '仪表盘',
+          title: '数据分析',
           icon: 'DashboardOutlined'
         }
       },
