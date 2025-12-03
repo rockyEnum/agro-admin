@@ -19,10 +19,10 @@
         class="chart-icon"
         @click="chartVisible = true"
       >
-      <a-modal
+<a-modal
         v-model:open="chartVisible"
         :footer="null"
-        width="960px"
+        :width="modalWidth"
        
         destroyOnClose
         centered
@@ -30,7 +30,7 @@
           wrapClassName="chart-modal"
           :bodyStyle="{ height: '100%' }"
       >
-        <Chart />
+        <Chart v-model:expanded="chartExpanded" />
       </a-modal>
       <a-dropdown>
         <a class="ant-dropdown-link" @click.prevent>
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import chartImg from '@/assets/chart.png'
 import Chart from '@/components/chart.vue'
 import {
@@ -82,6 +82,8 @@ const emit = defineEmits<{
 }>();
 
 const chartVisible = ref(false)
+const chartExpanded = ref(true)
+const modalWidth = computed(() => chartExpanded.value ? '950px' : '360px')
 
 const handleToggle = () => {
   emit("toggle");

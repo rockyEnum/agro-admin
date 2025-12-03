@@ -1,7 +1,7 @@
 <template>
   <div class="yomi-layout">
     <!-- 左侧：推荐话术 + 搜索 -->
-    <div class="yomi-panel">
+    <div class="yomi-panel" v-show="isExpanded">
       <!-- 搜索框（Ant Design Vue） -->
       <a-input
         v-model:value="keyword"
@@ -60,8 +60,16 @@
     <!-- 右侧：YoMi 主会话区域 -->
     <div class="yomi-chat">
       <div class="yomi-chat-header">
-        <div class="yomi-chat-title">
-          <SvgIcon  name="expand"/>
+        <div
+          class="yomi-chat-title"
+          :class="{ 'yomi-chat-title-disabled': !isCollapsible }"
+          @click="togglePanel"
+        >
+          <SvgIcon
+            v-if="isCollapsible"
+            name="expand"
+            :class="{ 'rotate-180': isExpanded }"
+          />
           <span>YoMi</span>
         </div>
       </div>
@@ -103,13 +111,51 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, computed } from 'vue'
 import SvgIcon from '@/components/SvgIcon.vue'
 import chartImg from '@/assets/chart.png'
 import chartLargeImg from '/chart-large.png'
 
+const props = defineProps<{
+  expanded?: boolean
+  collapsible?: boolean
+}>()
+
+const emit = defineEmits<{
+  (e: 'update:expanded', value: boolean): void
+}>()
+
 const keyword = ref('')
 const message = ref('')
+const isExpanded = ref(props.expanded ?? true) // 默认展开左侧面板
+const isCollapsible = computed(() => props.collapsible !== false)
+
+watch(
+  () => props.expanded,
+  (value) => {
+    if (typeof value === 'boolean') {
+      isExpanded.value = value
+    }
+  }
+)
+
+watch(
+  isCollapsible,
+  (canCollapse) => {
+    if (!canCollapse && !isExpanded.value) {
+      isExpanded.value = true
+      emit('update:expanded', true)
+    }
+  },
+  { immediate: true }
+)
+
+const togglePanel = () => {
+  if (!isCollapsible.value) return
+  const next = !isExpanded.value
+  isExpanded.value = next
+  emit('update:expanded', next)
+}
 
 const messages = ref([
   {
@@ -299,6 +345,16 @@ const handleMenuClick = ({ key }: { key: string }) => {
   font-size: 16px;
   font-weight: 600;
   color: #373f4b;
+  cursor: pointer;
+}
+
+.yomi-chat-title-disabled {
+  cursor: default;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
 }
 
 .yomi-chat-menu {
