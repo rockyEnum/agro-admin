@@ -120,10 +120,12 @@
 
       <section class="monitor-panel">
         <div class="monitor-grid">
-          <div
+          <button
             v-for="camera in filteredCameras"
             :key="camera.id"
+            type="button"
             class="monitor-card"
+            @click="handleOpenDetail(camera.id)"
           >
             <div class="monitor-preview">
               <div class="preview-icon">
@@ -138,7 +140,7 @@
               <div class="info-title">{{ camera.name }}</div>
               <div class="info-tag">{{ camera.zoneLabel }}</div>
             </div>
-          </div>
+          </button>
         </div>
       </section>
     </div>
@@ -147,6 +149,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import SvgIcon from '@/components/SvgIcon.vue'
 import cameraIcon from '@/assets/camera.png'
 
@@ -170,6 +173,8 @@ interface CameraCard {
   zoneLabel: string
   status: CameraStatus
 }
+
+const router = useRouter()
 
 const zones = ref<ZoneItem[]>([
   {
@@ -344,6 +349,15 @@ const handleSelectZone = (zoneId: string) => {
 const handleReset = () => {
   deviceKeyword.value = ''
   statusFilter.value = 'all'
+}
+
+const handleOpenDetail = (cameraId: string) => {
+  router.push({
+    name: 'CloudCenterDetail',
+    params: {
+      cameraId,
+    },
+  })
 }
 </script>
 
@@ -576,6 +590,21 @@ const handleReset = () => {
   width: 307px;
   height: 189px;
   position: relative;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.monitor-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+.monitor-card:focus-visible {
+  outline: 2px solid #85a5ff;
+  outline-offset: 2px;
 }
 
 .monitor-preview {

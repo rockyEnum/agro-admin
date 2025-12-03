@@ -94,10 +94,10 @@ const menuItems =  [
     title: '数据分析'
   },
   {
-    key: '/dashboard2',
+    key: '/control-management',
     icon:    'caidan2',
-    label: '仪表盘',
-    title: '仪表盘'
+    label: '控制管理',
+    title: '控制管理'
   },
   {
     key: '/cloud-center',

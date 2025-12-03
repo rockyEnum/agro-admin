@@ -35,6 +35,24 @@ const routes: RouteRecordRaw[] = [
         }
       },
       {
+        path: 'cloud-center/:cameraId',
+        name: 'CloudCenterDetail',
+        component: () => import('@/views/CloudCenterDetail.vue'),
+        meta: {
+          title: '云台详情',
+          hidden: true
+        }
+      },
+      {
+        path: 'control-management',
+        name: 'ControlManagement',
+        component: () => import('@/views/ControlManagement.vue'),
+        meta: {
+          title: '控制管理',
+          icon: 'ControlOutlined'
+        }
+      },
+      {
         path: 'users',
         name: 'Users',
         component: () => import('@/views/Users.vue'),
