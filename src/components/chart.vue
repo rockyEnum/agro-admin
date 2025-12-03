@@ -26,22 +26,31 @@
 
           <!-- 消息卡片 -->
           <div class="yomi-messages">
-            <div class="yomi-message yomi-message-primary">
+            <div
+              v-for="(msg, index) in messages"
+              :key="index"
+              class="yomi-message"
+              :class="{ 'yomi-message-primary': msg.primary }"
+            >
               <div class="yomi-message-text">
-                下面给你一份玉米种植环境参考指标，涵盖温度、光照、水分、土壤、空气等主要条件，方便你在不同气候区或种植模式中参考
+                {{ msg.text }}
               </div>
-              <a-button type="text" class="yomi-more-btn">
-                <MoreOutlined />
-              </a-button>
-            </div>
-
-            <div class="yomi-message">
-              <div class="yomi-message-text">
-                光周期特性：玉米属短日照作物，但对光周期不敏感，可在不同纬度种植
-              </div>
-              <a-button type="text" class="yomi-more-btn yomi-more-btn-light">
-                <MoreOutlined />
-              </a-button>
+              <a-dropdown :trigger="['hover']">
+                <a-button
+                  type="text"
+                  class="yomi-more-btn"
+                  :class="{ 'yomi-more-btn-light': !msg.primary }"
+                >
+                  <SvgIcon name="more" />
+                </a-button>
+                <template #overlay>
+                  <a-menu @click="handleMenuClick">
+                    <a-menu-item key="copy">复制</a-menu-item>
+                    <a-menu-item key="edit">编辑</a-menu-item>
+                    <a-menu-item key="delete">删除</a-menu-item>
+                  </a-menu>
+                </template>
+              </a-dropdown>
             </div>
           </div>
         </div>
@@ -72,11 +81,11 @@
             placeholder="和YoMi说点什么"
           />
           <div class="yomi-chat-toolbar">
-            <a-button class="yomi-chat-icon-btn" shape="circle">
-              <PaperClipOutlined />
-            </a-button>
+            <div class="yomi-chat-icon-btn" shape="circle">
+              <SvgIcon name="link" />
+            </div>
             <a-button class="yomi-chat-chip">
-              <ExperimentOutlined />
+              <SvgIcon name="sikao" />
               <span class="yomi-chat-chip-text">深度思考</span>
             </a-button>
             <a-button
@@ -84,7 +93,7 @@
               shape="circle"
               class="yomi-chat-send"
             >
-              <SendOutlined />
+            <SvgIcon name="send" />
             </a-button>
           </div>
         </div>
@@ -95,12 +104,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import {
-  MoreOutlined,
-  PaperClipOutlined,
-  ExperimentOutlined,
-  SendOutlined
-} from '@ant-design/icons-vue'
 import SvgIcon from '@/components/SvgIcon.vue'
 import chartImg from '@/assets/chart.png'
 import chartLargeImg from '/chart-large.png'
@@ -108,9 +111,37 @@ import chartLargeImg from '/chart-large.png'
 const keyword = ref('')
 const message = ref('')
 
+const messages = ref([
+  {
+    text: '下面给你一份玉米种植环境参考指标，涵盖温度、光照、水分、土壤、空气等主要条件，方便你在不同气候区或种植模式中参考',
+    primary: true
+  },
+  {
+    text: '光周期特性：玉米属短日照作物，但对光周期不敏感，可在不同纬度种植',
+    primary: false
+  }
+])
+
 const onSearch = () => {
   // 预留搜索回调，方便后续接入实际逻辑
   // console.log('搜索：', keyword.value)
+}
+
+const handleMenuClick = ({ key }: { key: string }) => {
+  // 处理菜单点击事件
+  console.log('菜单点击：', key)
+  // 可以根据 key 执行不同的操作
+  switch (key) {
+    case 'copy':
+      // 复制逻辑
+      break
+    case 'edit':
+      // 编辑逻辑
+      break
+    case 'delete':
+      // 删除逻辑
+      break
+  }
 }
 </script>
 
@@ -177,10 +208,6 @@ const onSearch = () => {
   margin: 12px 0;
 }
 
-.yomi-avatar {
- 
-}
-
 .yomi-avatar-inner {
   width: 28px;
   height: 28px;
@@ -232,6 +259,15 @@ const onSearch = () => {
   justify-content: center;
   padding: 0;
   color: #6d7d95;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  flex-shrink: 0;
+}
+
+.yomi-message:hover .yomi-more-btn {
+  opacity: 1;
+  visibility: visible;
 }
 
 .yomi-more-btn-light {
@@ -328,13 +364,20 @@ const onSearch = () => {
 .yomi-chat-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   margin-top: 12px;
+  gap: 8px;
 }
 
 .yomi-chat-icon-btn {
+  width: 28px;
+  height: 28px;
   border-radius: 8px !important;
-  border-color: #ebeef5;
+  border:0.5px solid #EBEEF5;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .yomi-chat-chip {
@@ -354,7 +397,7 @@ const onSearch = () => {
 .yomi-chat-send {
   width: 32px;
   height: 32px;
-  border-radius: 999px;
+  margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: center;
