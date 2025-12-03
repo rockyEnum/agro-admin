@@ -30,7 +30,7 @@
           wrapClassName="chart-modal"
           :bodyStyle="{ height: '100%' }"
       >
-        <Chart v-model:expanded="chartExpanded" />
+        <Chat v-model:expanded="chartExpanded" collapsible />
       </a-modal>
       <a-dropdown>
         <a class="ant-dropdown-link" @click.prevent>
@@ -63,7 +63,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import chartImg from '@/assets/chart.png'
-import Chart from '@/components/chart.vue'
+import Chat from '@/components/chat.vue'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,

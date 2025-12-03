@@ -42,6 +42,15 @@ const routes: RouteRecordRaw[] = [
           title: '系统设置',
           icon: 'SettingOutlined'
         }
+      },
+      {
+        path: 'chat',
+        name: 'Chat',
+        component: () => import('@/views/Chat.vue'),
+        meta: {
+          title: 'AI助手',
+          icon: 'RobotOutlined'
+        }
       }
     ]
   }

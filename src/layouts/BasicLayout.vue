@@ -105,11 +105,11 @@ const menuItems =  [
     title: '仪表盘'
   },
   {
-    key: '/dashboard4',
+    key: '/chat',
     icon:    caidan4,
     iconType: 'img',
-    label: '仪表盘',
-    title: '仪表盘'
+    label: 'ai助手',
+    title: 'ai助手'
   },
 ]
 
