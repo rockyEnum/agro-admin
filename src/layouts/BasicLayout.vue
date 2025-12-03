@@ -100,10 +100,10 @@ const menuItems =  [
     title: '仪表盘'
   },
   {
-    key: '/dashboard3',
+    key: '/cloud-center',
     icon:    'caidan3',
-    label: '仪表盘',
-    title: '仪表盘'
+    label: '云台中心',
+    title: '云台中心'
   },
   {
     key: '/chat',

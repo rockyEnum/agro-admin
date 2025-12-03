@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory,createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import BasicLayout from '@/layouts/BasicLayout.vue'
 
 const routes: RouteRecordRaw[] = [
@@ -23,6 +23,15 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: '数据分析',
           icon: 'DashboardOutlined'
+        }
+      },
+      {
+        path: 'cloud-center',
+        name: 'CloudCenter',
+        component: () => import('@/views/CloudCenter.vue'),
+        meta: {
+          title: '云台中心',
+          icon: 'AppstoreOutlined'
         }
       },
       {
