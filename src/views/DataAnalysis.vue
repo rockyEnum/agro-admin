@@ -16,8 +16,8 @@
 
     <div class="page-header">
       <div class="title-block">
-        <h1>数据分析</h1>
-        <p>Data analysis</p>
+        <span>数据分析</span>
+        <span>Data analysis</span>
       </div>
       <a-button class="action-chip" shape="round">
         <SvgIcon name="tool" width="16" height="16" />
@@ -53,7 +53,9 @@
             </div>
             <transition name="fade">
               <div
-                v-if="expandedKeys.includes(section.id) && section.sensors?.length"
+                v-if="
+                  expandedKeys.includes(section.id) && section.sensors?.length
+                "
                 class="tree-children"
               >
                 <div
@@ -62,7 +64,7 @@
                   class="tree-sensor"
                   :class="{
                     active: activeSensor === sensor.id,
-                    muted: sensor.disabled
+                    muted: sensor.disabled,
                   }"
                   @mouseenter="activeSensor = sensor.id"
                 >
@@ -88,12 +90,13 @@
         </div>
 
         <div class="filter-actions">
-          <a-button shape="circle">
-            <SvgIcon name="tool" width="16" height="16" />
-          </a-button>
-          <a-button shape="circle">
-            <SvgIcon name="more" width="16" height="16" />
-          </a-button>
+          <div class="action-item">
+            <SvgIcon name="association" width="16" height="16" />
+          </div>
+
+          <div class="action-item">
+            <SvgIcon name="clear" width="16" height="16" />
+          </div>
         </div>
       </div>
 
@@ -154,152 +157,166 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { FileExcelOutlined, LineChartOutlined, ReloadOutlined, TableOutlined } from '@ant-design/icons-vue'
-import LineChart from '@/components/LineChart.vue'
-import SvgIcon from '@/components/SvgIcon.vue'
+import { computed, ref } from "vue";
+import {
+  FileExcelOutlined,
+  LineChartOutlined,
+  ReloadOutlined,
+  TableOutlined,
+} from "@ant-design/icons-vue";
+import LineChart from "@/components/LineChart.vue";
+import SvgIcon from "@/components/SvgIcon.vue";
 
 interface SensorItem {
-  id: string
-  label: string
-  disabled?: boolean
+  id: string;
+  label: string;
+  disabled?: boolean;
 }
 
 interface SectionItem {
-  id: string
-  label: string
-  sensors: SensorItem[]
+  id: string;
+  label: string;
+  sensors: SensorItem[];
 }
 
 const tabItems = [
-  { key: 'comparison', label: '数据对比' },
-  { key: 'sensor', label: '传感器配置' }
-]
+  { key: "comparison", label: "数据对比" },
+  { key: "sensor", label: "传感器配置" },
+];
 
-const activeTab = ref(tabItems[0].key)
+const activeTab = ref(tabItems[0].key);
 
 const sections = ref<SectionItem[]>([
   {
-    id: 'zone-green',
-    label: '绿化种植区',
+    id: "zone-green",
+    label: "绿化种植区",
     sensors: [
-      { id: 'sensor-soil-30', label: '土壤水分(30cm)' },
-      { id: 'sensor-soil-20', label: '土壤水分(20cm)' },
-      { id: 'sensor-soil-10', label: '土壤水分(10cm)', disabled: true },
-      { id: 'sensor-air', label: '空气温度' }
-    ]
+      { id: "sensor-soil-30", label: "土壤水分(30cm)" },
+      { id: "sensor-soil-20", label: "土壤水分(20cm)" },
+      { id: "sensor-soil-10", label: "土壤水分(10cm)", disabled: true },
+      { id: "sensor-air", label: "空气温度" },
+    ],
   },
   {
-    id: 'zone-eco',
-    label: '生态种植区',
-    sensors: []
+    id: "zone-eco",
+    label: "生态种植区",
+    sensors: [],
   },
   {
-    id: 'zone-farm',
-    label: '农业种植区',
-    sensors: []
+    id: "zone-farm",
+    label: "农业种植区",
+    sensors: [],
   },
   {
-    id: 'zone-plant',
-    label: '植物生产区',
-    sensors: []
+    id: "zone-plant",
+    label: "植物生产区",
+    sensors: [],
   },
   {
-    id: 'zone-smart',
-    label: '智能种植区',
-    sensors: []
-  }
-])
+    id: "zone-smart",
+    label: "智能种植区",
+    sensors: [],
+  },
+]);
 
-const expandedKeys = ref<string[]>(['zone-green'])
-const checkedSensors = ref<string[]>(['sensor-soil-30', 'sensor-soil-20', 'sensor-air'])
-const activeSensor = ref('sensor-soil-20')
-const searchKeyword = ref('')
+const expandedKeys = ref<string[]>(["zone-green"]);
+const checkedSensors = ref<string[]>([
+  "sensor-soil-30",
+  "sensor-soil-20",
+  "sensor-air",
+]);
+const activeSensor = ref("sensor-soil-20");
+const searchKeyword = ref("");
 
 const toggleExpand = (id: string) => {
   expandedKeys.value = expandedKeys.value.includes(id)
     ? expandedKeys.value.filter((key) => key !== id)
-    : [...expandedKeys.value, id]
-}
+    : [...expandedKeys.value, id];
+};
 
 const toggleSensor = (id: string) => {
-  const exists = checkedSensors.value.includes(id)
+  const exists = checkedSensors.value.includes(id);
   checkedSensors.value = exists
     ? checkedSensors.value.filter((key) => key !== id)
-    : [...checkedSensors.value, id]
-  activeSensor.value = id
-}
+    : [...checkedSensors.value, id];
+  activeSensor.value = id;
+};
 
 const filteredSections = computed(() => {
-  const keyword = searchKeyword.value.trim()
+  const keyword = searchKeyword.value.trim();
   if (!keyword) {
-    return sections.value
+    return sections.value;
   }
 
   return sections.value
     .map((section) => {
       if (!section.sensors.length) {
-        return section.label.includes(keyword) ? section : null
+        return section.label.includes(keyword) ? section : null;
       }
 
       const matchedSensors = section.sensors.filter((sensor) =>
         sensor.label.includes(keyword)
-      )
+      );
 
       if (section.label.includes(keyword)) {
         return {
           ...section,
-          sensors: matchedSensors.length ? matchedSensors : section.sensors
-        }
+          sensors: matchedSensors.length ? matchedSensors : section.sensors,
+        };
       }
 
       if (matchedSensors.length) {
         return {
           ...section,
-          sensors: matchedSensors
-        }
+          sensors: matchedSensors,
+        };
       }
 
-      return null
+      return null;
     })
-    .filter((item): item is SectionItem => Boolean(item))
-})
+    .filter((item): item is SectionItem => Boolean(item));
+});
 
 const metricOptions = [
-  { label: '原始数据', value: 'raw' },
-  { label: '生长指数', value: 'growth' },
-  { label: '农事记录', value: 'tasks' }
-]
-const selectedMetric = ref('raw')
-const startDate = ref<string>()
-const endDate = ref<string>()
+  { label: "原始数据", value: "raw" },
+  { label: "生长指数", value: "growth" },
+  { label: "农事记录", value: "tasks" },
+];
+const selectedMetric = ref("raw");
+const startDate = ref<string>();
+const endDate = ref<string>();
 
-const xAxisData = Array.from({ length: 30 }, (_, index) => `Jan ${index + 1}`)
+const xAxisData = Array.from({ length: 30 }, (_, index) => `Jan ${index + 1}`);
 
 const generateSeries = () => {
   const bases = [
-    { name: 'Label A', color: '#2EC7C9', offset: 20 },
-    { name: 'Label B', color: '#4071EF', offset: 25 },
-    { name: 'Label C', color: '#A07EF5', offset: 35 },
-    { name: 'Label D', color: '#FF8F6B', offset: 15 },
-    { name: 'Label E', color: '#FFC53D', offset: 10 },
-    { name: 'Label F', color: '#40DF9F', offset: 30 }
-  ]
+    { name: "Label A", color: "#2EC7C9", offset: 20 },
+    { name: "Label B", color: "#4071EF", offset: 25 },
+    { name: "Label C", color: "#A07EF5", offset: 35 },
+    { name: "Label D", color: "#FF8F6B", offset: 15 },
+    { name: "Label E", color: "#FFC53D", offset: 10 },
+    { name: "Label F", color: "#40DF9F", offset: 30 },
+  ];
 
   return bases.map((base, baseIndex) => ({
     name: base.name,
     color: base.color,
     data: xAxisData.map((_label, idx) =>
-      Math.round(base.offset + Math.sin((idx + baseIndex) / 3) * 6 + idx * 0.5 + baseIndex * 2)
-    )
-  }))
-}
+      Math.round(
+        base.offset +
+          Math.sin((idx + baseIndex) / 3) * 6 +
+          idx * 0.5 +
+          baseIndex * 2
+      )
+    ),
+  }));
+};
 
-const chartSeries = ref(generateSeries())
+const chartSeries = ref(generateSeries());
 
 const handleRefresh = () => {
-  chartSeries.value = generateSeries()
-}
+  chartSeries.value = generateSeries();
+};
 </script>
 
 <style scoped lang="less">
@@ -365,14 +382,15 @@ const handleRefresh = () => {
 }
 
 .title-block {
-  h1 {
-    margin: 0;
-    font-size: 24px;
+  display: flex;
+  gap: 4px;
+  span:first-child {
+    font-size: 18px;
     color: #373f4b;
     font-weight: 600;
   }
 
-  p {
+  span:last-child {
     margin: 4px 0 0;
     font-size: 12px;
     color: #6d7d95;
@@ -475,6 +493,18 @@ const handleRefresh = () => {
   display: flex;
   justify-content: flex-start;
   gap: 12px;
+  border-top: 0.5px solid #EBEEF5;
+  padding: 12px 0 0;
+  .action-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 0.5px solid #ebeef5;
+    background: #fff;
+  }
 }
 
 .chart-panel {
