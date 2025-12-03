@@ -171,9 +171,6 @@ const handleMenuClick = ({ key }: { key: string }) => {
 }
 
  
- 
-
- 
 
 .yomi-panel :deep(.ant-input) {
   font-size: 14px;
@@ -234,6 +231,9 @@ const handleMenuClick = ({ key }: { key: string }) => {
   padding: 8px;
   border-radius: 8px;
   background: transparent;
+  height: 38px;
+  box-sizing: border-box;
+  cursor: pointer;
 }
 
 .yomi-message-primary {
@@ -260,14 +260,14 @@ const handleMenuClick = ({ key }: { key: string }) => {
   padding: 0;
   color: #6d7d95;
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s, visibility 0.2s;
+  display: none;
+  transition: opacity 0.2s, display 0.2s;
   flex-shrink: 0;
 }
 
 .yomi-message:hover .yomi-more-btn {
   opacity: 1;
-  visibility: visible;
+  display: block;
 }
 
 .yomi-more-btn-light {
