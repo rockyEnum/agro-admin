@@ -1,7 +1,11 @@
 <template>
-  <div class="yomi-layout">
+  <div class="yomi-layout" :class="layoutClass">
     <!-- 左侧：推荐话术 + 搜索 -->
-    <div class="yomi-panel" v-show="isExpanded">
+    <div
+      class="yomi-panel"
+      :class="panelClass"
+      v-show="isExpanded"
+    >
       <!-- 搜索框（Ant Design Vue） -->
       <a-input
         v-model:value="keyword"
@@ -58,7 +62,10 @@
     </div>
 
     <!-- 右侧：YoMi 主会话区域 -->
-    <div class="yomi-chat">
+    <div
+      class="yomi-chat"
+      :class="chatClass"
+    >
       <div class="yomi-chat-header">
         <div
           class="yomi-chat-title"
@@ -116,9 +123,14 @@ import SvgIcon from '@/components/SvgIcon.vue'
 import chartImg from '@/assets/chart.png'
 import chartLargeImg from '/chart-large.png'
 
+type ClassType = string | string[] | Record<string, boolean>
+
 const props = defineProps<{
   expanded?: boolean
   collapsible?: boolean
+  panelClass?: ClassType
+  chatClass?: ClassType
+  layoutClass?: ClassType
 }>()
 
 const emit = defineEmits<{
@@ -205,7 +217,6 @@ const handleMenuClick = ({ key }: { key: string }) => {
   background: #ebeef5;
   display: flex;
   flex-direction: column;
-  border-radius: 0;
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
 }
@@ -328,7 +339,6 @@ const handleMenuClick = ({ key }: { key: string }) => {
   padding: 16px 16px 24px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 16px rgba(210, 217, 236, 0.5);
 }
 
 .yomi-chat-header {
