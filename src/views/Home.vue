@@ -64,16 +64,20 @@ import { reactive, ref } from "vue";
 import MapSidebar from "@/components/MapSidebar.vue";
 import MarkerDetailCard from "@/components/MarkerDetailCard.vue";
 import RegionDetailModal from "@/components/RegionDetailModal.vue";
-import errorIcon from "@/assets/error.png";
-import sensorIcon from "@/assets/sensor-success.png";
-import solarIcon from "@/assets/solar-success.png";
+import solarError from "@/assets/icons/solar-error.svg?url";
+import solarIcon from "@/assets/icons/solar-success.svg?url";
+import sensorIcon from "@/assets/icons/sensor-success.svg?url";
+import sensorError from "@/assets/icons/sensor-error.svg?url";
 import type { MarkerDetail } from "@/types/marker";
+
 
 type Marker = {
   position: [number, number];
-  icon: string;
+  icon: {
+    iconUrl:string,
+    iconSize:[number, number];
+  };
   title: string;
-  iconSize?: [number, number];
   data: MarkerDetail;
 };
 
@@ -94,7 +98,7 @@ const markers = ref<Marker[]>([
     position: [113.280637, 23.125178] as [number, number],
     icon: {
       iconUrl: sensorIcon,
-      iconSize: [24, 27],
+      iconSize: [24,28],
     },
     title: "传感器节点",
 
@@ -111,7 +115,7 @@ const markers = ref<Marker[]>([
     position: [113.285637, 23.130178] as [number, number],
     icon: {
       iconUrl: solarIcon,
-      iconSize: [24, 27],
+      iconSize: [24,28],
     },
     title: "太阳能温室",
 
@@ -127,8 +131,8 @@ const markers = ref<Marker[]>([
   {
     position: [113.275637, 23.120178] as [number, number],
     icon: {
-      iconUrl: errorIcon,
-      iconSize: [24, 27],
+      iconUrl: solarError,
+      iconSize: [24,28],
     },
     title: "故障节点",
     data: {
@@ -143,16 +147,15 @@ const markers = ref<Marker[]>([
   {
     position: [113.290637, 23.135178] as [number, number],
     icon: {
-      iconUrl: solarIcon,
-      iconSize: [24, 27],
+      iconUrl: sensorError,
+      iconSize: [24,28],
     },
-    iconSize: [24, 27],
     title: "传感器节点2",
     data: {
       name: "Node two",
       nodeCode: "21100000008-4N",
       nodeType: "DATA",
-      status: "online",
+      status: "error",
       lastReportTime: "2024-09-27 03:50:20",
       stats: { total: 10, normal: 10, abnormal: 0 },
     },
