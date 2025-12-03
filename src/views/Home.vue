@@ -1,60 +1,62 @@
 <template>
-  <div class="mapDiv">
-    <!-- 地图左侧列表 -->
-    <MapSidebar @item-click="handleItemClick" @search="handleSearch" />
+  <div class="page-content">
+    <div class="mapDiv">
+      <!-- 地图左侧列表 -->
+      <MapSidebar @item-click="handleItemClick" @search="handleSearch" />
 
-    <tdt-map :center="state.center" :zoom="state.zoom">
-      <tdt-tilelayer-tdt :url="state.url" :zIndex="1"></tdt-tilelayer-tdt>
+      <tdt-map :center="state.center" :zoom="state.zoom">
+        <tdt-tilelayer-tdt :url="state.url" :zIndex="1"></tdt-tilelayer-tdt>
 
-      <!-- 区域多边形 -->
-      <tdt-polygon
-        v-for="(region, rIndex) in regions"
-        :key="`region-${rIndex}`"
-        :path="region.path"
-        color="#999"
-        fillColor="#ccc"
-        :weight="2"
-        lineStyle="solid"
-        @click="openRegionModal(region)"
+        <!-- 区域多边形 -->
+        <tdt-polygon
+          v-for="(region, rIndex) in regions"
+          :key="`region-${rIndex}`"
+          :path="region.path"
+          color="#999"
+          fillColor="#ccc"
+          :weight="2"
+          lineStyle="solid"
+          @click="openRegionModal(region)"
+        />
+
+        <!-- 标记点 -->
+        <tdt-marker
+          v-for="(marker, index) in markers"
+          :key="index"
+          :position="marker.position"
+          :icon="marker.icon"
+          @click="openMarkerModal(marker)"
+          class="aaa"
+        />
+      </tdt-map>
+
+      <a-modal
+        v-model:open="modal.visible"
+        :title="null"
+        :footer="null"
+        :destroyOnClose="true"
+        :maskClosable="true"
+        width="420px"
+        :bodyStyle="{ padding: 0 }"
+        @cancel="closeModal"
+      >
+        <MarkerDetailCard v-if="selectedMarker" :data="selectedMarker.data" />
+      </a-modal>
+
+      <!-- 区域详情弹窗（带折线图） -->
+      <RegionDetailModal
+        v-model:open="regionModalOpen"
+        :title="regionTitle"
+        :xData="regionChartX"
+        :yData="regionChartY"
       />
 
-      <!-- 标记点 -->
-      <tdt-marker
-        v-for="(marker, index) in markers"
-        :key="index"
-        :position="marker.position"
-        :icon="marker.icon"
-        @click="openMarkerModal(marker)"
-        class="aaa"
-      />
-    </tdt-map>
-
-    <a-modal
-      v-model:open="modal.visible"
-      :title="null"
-      :footer="null"
-      :destroyOnClose="true"
-      :maskClosable="true"
-      width="420px"
-      :bodyStyle="{ padding: 0 }"
-      @cancel="closeModal"
-    >
-      <MarkerDetailCard v-if="selectedMarker" :data="selectedMarker.data" />
-    </a-modal>
-
-    <!-- 区域详情弹窗（带折线图） -->
-    <RegionDetailModal
-      v-model:open="regionModalOpen"
-      :title="regionTitle"
-      :xData="regionChartX"
-      :yData="regionChartY"
-    />
-
-    <!-- 地图右上角图标 -->
-    <div class="map-top-right-icons">
-      <img src="@/assets/camera.png" alt="相机" class="icon-item" />
-      <img src="@/assets/sensor-grey.png" alt="传感器" class="icon-item" />
-      <img src="@/assets/marker-pos.png" alt="标记位置" class="icon-item" />
+      <!-- 地图右上角图标 -->
+      <div class="map-top-right-icons">
+        <img src="@/assets/camera.png" alt="相机" class="icon-item" />
+        <img src="@/assets/sensor-grey.png" alt="传感器" class="icon-item" />
+        <img src="@/assets/marker-pos.png" alt="标记位置" class="icon-item" />
+      </div>
     </div>
   </div>
 </template>
@@ -70,12 +72,11 @@ import sensorIcon from "@/assets/icons/sensor-success.svg?url";
 import sensorError from "@/assets/icons/sensor-error.svg?url";
 import type { MarkerDetail } from "@/types/marker";
 
-
 type Marker = {
   position: [number, number];
   icon: {
-    iconUrl:string,
-    iconSize:[number, number];
+    iconUrl: string;
+    iconSize: [number, number];
   };
   title: string;
   data: MarkerDetail;
@@ -98,7 +99,7 @@ const markers = ref<Marker[]>([
     position: [113.280637, 23.125178] as [number, number],
     icon: {
       iconUrl: sensorIcon,
-      iconSize: [24,28],
+      iconSize: [24, 28],
     },
     title: "传感器节点",
 
@@ -115,7 +116,7 @@ const markers = ref<Marker[]>([
     position: [113.285637, 23.130178] as [number, number],
     icon: {
       iconUrl: solarIcon,
-      iconSize: [24,28],
+      iconSize: [24, 28],
     },
     title: "太阳能温室",
 
@@ -132,7 +133,7 @@ const markers = ref<Marker[]>([
     position: [113.275637, 23.120178] as [number, number],
     icon: {
       iconUrl: solarError,
-      iconSize: [24,28],
+      iconSize: [24, 28],
     },
     title: "故障节点",
     data: {
@@ -148,7 +149,7 @@ const markers = ref<Marker[]>([
     position: [113.290637, 23.135178] as [number, number],
     icon: {
       iconUrl: sensorError,
-      iconSize: [24,28],
+      iconSize: [24, 28],
     },
     title: "传感器节点2",
     data: {
@@ -164,7 +165,7 @@ const markers = ref<Marker[]>([
     position: [113.270637, 23.115178] as [number, number],
     icon: {
       iconUrl: solarIcon,
-      iconSize:[24,27]
+      iconSize: [24, 27],
     },
     title: "太阳能温室2",
     data: {
@@ -207,7 +208,7 @@ const regionChartX = ref<(string | number)[]>([
   "Jan 17",
   "Jan 21",
   "Jan 25",
-  "Jan 29"
+  "Jan 29",
 ]);
 const regionChartY = ref<number[]>([30, 32, 34, 36, 37, 38, 40, 42]);
 const regionTitle = ref("4号地");
@@ -252,9 +253,10 @@ export default { name: "Home" };
 
 <style scoped>
 .mapDiv {
-  width: 100%;
   height: 100%;
   position: relative;
+  width: 100%;
+  border-radius: 8px;
 }
 
 .map-top-right-icons {

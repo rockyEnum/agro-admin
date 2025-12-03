@@ -9,12 +9,15 @@ import ChatComponent from '@/components/chat.vue'
 </script>
 
 <style scoped>
-.chat-view,
-.chat-view__content {
+.chat-view{
   width: 100%;
   height: 100%;
+  padding:0 16px 16px;
 }
+ .chat-view__content{
  
+  background: #fff;
+ }
 
 :deep(.chat-view__panel) {
   background: inherit !important;
@@ -24,7 +27,7 @@ import ChatComponent from '@/components/chat.vue'
 
 :deep(.chat-view__chat),
 :deep(.chat-view__layout) {
-  background: inherit;
-  border-radius: 0 !important;
+  /* background: inherit; */
+  border-radius: 8px !important;
 }
 </style>

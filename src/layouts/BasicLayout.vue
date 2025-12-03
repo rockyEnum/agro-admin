@@ -18,21 +18,54 @@
         mode="inline"
         theme="light"
         @click="handleMenuClick"
+        inlineIndent="20"
       >
         <a-menu-item
           v-for="item in menuItems"
           :key="item.key"
-          class="menu-item"
+          class="menu-item menu-item-middle"
+        >
+          <template #icon>
+            <SvgIcon
+              :name="item.icon"
+              width="18"
+              height="18"
+            />
+          </template>
+          {{ item.label }}
+        </a-menu-item>
+
+        <!-- 单独的 AI 助手菜单项，放在列表最下面 -->
+        <a-menu-item
+          key="/chat"
+          class="menu-item menu-item-large"
         >
           <template #icon>
             <img
-              v-if="item.iconType === 'img'"
-              :src="item.icon"
+              :src="caidan4"
               alt=""
-              class="menu-icon-img"
+              class="menu-icon-img-large"
             />
+          </template>
+          AI 助手
+        </a-menu-item>
+      </a-menu>
+      <a-menu
+        v-model:selectedKeys="selectedKeys"
+        v-model:openKeys="openKeys"
+        mode="inline"
+        theme="light"
+        @click="handleMenuClick"
+        inlineIndent="20"
+        class="footer-menu"
+      >
+        <a-menu-item
+          v-for="item in menuFooterItems"
+          :key="item.key"
+          class="menu-item menu-item-middle"
+        >
+          <template #icon>
             <SvgIcon
-              v-else
               :name="item.icon"
               width="18"
               height="18"
@@ -54,9 +87,9 @@
       <a-layout-content
         class="layout-content"
       >
-        <div class="content-wrapper">
+      
           <router-view />
-        </div>
+       
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -105,12 +138,20 @@ const menuItems =  [
     label: '云台中心',
     title: '云台中心'
   },
+]
+
+const menuFooterItems =  [
   {
-    key: '/chat',
-    icon: caidan4,
-    iconType: 'img',
-    label: 'AI 助手',
-    title: 'AI 助手'
+    key: '/control1',
+    icon:    'snowflake',
+    label: '控制管理',
+    title: '控制管理'
+  },
+  {
+    key: '/setting',
+    icon:    'tool',
+    label: '设置',
+    title: '设置'
   },
 ]
 
@@ -160,14 +201,7 @@ const handleMenuClick = (e: MenuClickEvent) => {
 .layout-content {
   background: #f0f2f5;
   min-height: calc(100vh - 64px);
-  .content-wrapper {
-    margin:0 16px 16px;
-    // padding: 24px;
-    background: #fff;
-    height: calc(100vh - 80px);
-    border-radius: 4px;
-    overflow: auto;
-  }
+  padding-bottom: 12px;
 }
 
 .menu-icon-img {
@@ -178,5 +212,32 @@ const handleMenuClick = (e: MenuClickEvent) => {
   vertical-align: middle;
 }
 
+.menu-icon-img-large {
+  width: 28px;
+  height: 28px;
+}
+
+:deep(.menu-item-middle.ant-menu-submenu-title){
+  padding-inline: calc(50% - 20px);
+    /* width: 32px; */
+    height: 32px;
+    line-height: 32px;
+    width: calc(100% - 20px);
+}
+.menu-item-middle{
+ 
+}
+.footer-menu{
+  margin-top: auto;
+  margin-bottom: 24px;
+}
+:deep(.menu-item-large){
+  padding-left: 10px;
+  padding-top: 6px;
+}
+:deep(.ant-layout-sider-children){
+  display: flex;
+  flex-direction: column;
+}
 </style>
 

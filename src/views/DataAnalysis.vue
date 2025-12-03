@@ -1,17 +1,18 @@
 <template>
   <div class="data-analysis-page">
     <div class="tab-menu">
-      <button
-        v-for="item in tabItems"
-        :key="item.key"
-        type="button"
-        class="tab-item"
-        :class="{ active: activeTab === item.key }"
-        @click="activeTab = item.key"
+      <a-tabs
+        v-model:activeKey="activeTab"
+        size="small"
+        :animated="false"
+        class="tabs"
       >
-        <span>{{ item.label }}</span>
-        <span class="tab-indicator" />
-      </button>
+        <a-tab-pane
+          v-for="item in tabItems"
+          :key="item.key"
+          :tab="item.label"
+        />
+      </a-tabs>
     </div>
 
     <div class="page-header">
@@ -20,19 +21,23 @@
         <span>Data analysis</span>
       </div>
       <a-button class="action-chip" shape="round">
-        <SvgIcon name="tool" width="16" height="16" />
+        <SvgIcon name="association" width="16" height="16" />
         便捷组合
       </a-button>
     </div>
 
     <div class="content-area">
       <div class="filter-panel">
-        <a-input-search
-          v-model:value="searchKeyword"
-          placeholder="按关键字进行搜索"
-          allow-clear
-          size="large"
-        />
+        <a-input
+        v-model:value="searchKeyword"
+        class="yomi-search-input"
+        placeholder="按关键字进行搜索"
+        :allow-clear="true"
+      >
+        <template #suffix>
+          <SvgIcon name="search" />
+        </template>
+      </a-input>
 
         <div class="tree-list">
           <div
@@ -127,18 +132,18 @@
           </div>
 
           <div class="toolbar-right">
-            <a-button shape="circle" @click="handleRefresh">
-              <ReloadOutlined />
+            <a-button @click="handleRefresh">
+              <SvgIcon name="refresh" />
             </a-button>
-            <a-button type="primary" shape="round">
-              <FileExcelOutlined />
+            <a-button>
+              <SvgIcon name="excel" />
               导出Excel
             </a-button>
-            <a-button shape="circle">
-              <LineChartOutlined />
+            <a-button>
+              <SvgIcon name="caidan1" color="#4071EF" />
             </a-button>
-            <a-button shape="circle">
-              <TableOutlined />
+            <a-button>
+              <SvgIcon name="table" />
             </a-button>
           </div>
         </div>
@@ -321,7 +326,6 @@ const handleRefresh = () => {
 
 <style scoped lang="less">
 .data-analysis-page {
-  padding: 20px 20px 24px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -332,50 +336,35 @@ const handleRefresh = () => {
 
 .tab-menu {
   display: flex;
-  background: #e7ecfd;
-  border-radius: 999px;
   padding: 4px;
-  width: fit-content;
+
+  color: #6d7d95;
+  .tabs {
+    width: 100%;
+  }
 }
-
-.tab-item {
-  border: none;
-  background: transparent;
-  color: #373f4b;
-  font-size: 14px;
-  padding: 8px 20px;
-  border-radius: 24px;
-  cursor: pointer;
-  position: relative;
-  font-weight: 500;
-
-  .tab-indicator {
-    position: absolute;
-    bottom: 0;
-    left: 12px;
-    right: 12px;
-    height: 4px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #84a6ff, #4071ef);
-    opacity: 0;
-    transition: opacity 0.2s ease;
+:deep(.tab-menu) {
+  .ant-tabs-nav {
+    margin: 0px;
+    padding-left: 16px;
   }
-
-  &.active {
+}
+:deep(.tab-menu .ant-tabs-tab) {
+  padding: 12px 32px;
+  & + .ant-tabs-tab {
+    margin: 0px;
+  }
+  &.ant-tabs-tab-active .ant-tabs-tab-btn {
     color: #4071ef;
-    background: rgba(64, 113, 239, 0.08);
-
-    .tab-indicator {
-      opacity: 1;
-    }
   }
+}
+:deep(.tab-menu .ant-tabs-ink-bar) {
+  border-radius: 6px 6px 0px 0px;
+  background: linear-gradient(315deg, #4171ee 0%, #84a6ff 100%);
+  height: 4px;
 }
 
 .page-header {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 20px 24px 16px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -402,10 +391,11 @@ const handleRefresh = () => {
   display: flex;
   align-items: center;
   gap: 6px;
-  border-radius: 999px;
   border: 1px solid #ebeef5;
   background: #fff;
   color: #373f4b;
+  height: 40px;
+  border-radius: 8px;
 }
 
 .content-area {
@@ -493,7 +483,7 @@ const handleRefresh = () => {
   display: flex;
   justify-content: flex-start;
   gap: 12px;
-  border-top: 0.5px solid #EBEEF5;
+  border-top: 0.5px solid #ebeef5;
   padding: 12px 0 0;
   .action-item {
     display: flex;
@@ -544,6 +534,7 @@ const handleRefresh = () => {
 
 .metric-select {
   min-width: 140px;
+   
 }
 
 .toolbar-right {
@@ -582,5 +573,9 @@ const handleRefresh = () => {
 
 :deep(.ant-checkbox-wrapper) {
   color: #4071ef;
+}
+
+:deep(.ant-select-selector){
+  color: #6D7D95;
 }
 </style>

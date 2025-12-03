@@ -4,6 +4,7 @@ import router from './router'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 import VueTianditu from 'vue-tianditu'
+import './main.css'
 
 const app = createApp(App)
 
