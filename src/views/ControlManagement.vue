@@ -1,6 +1,11 @@
 <template>
   <div class="control-page">
-    <header class="control-header">
+    <TabMenu
+      :tab-items="tabItems"
+      v-model:active-key="activeTab"
+      @change="handleTabChange"
+    />
+    <header class="page-header">
       <div class="title-block">
         <p class="title">
           设备列表
@@ -10,20 +15,17 @@
         </p>
       </div>
       <div class="actions-row">
+        
         <a-input
-          v-model:value="equipmentKeyword"
-          class="search-input"
-          allow-clear
-          placeholder="按设备名称搜索"
-        >
-          <template #suffix>
-            <SvgIcon
-              name="search"
-              width="16"
-              height="16"
-            />
-          </template>
-        </a-input>
+        v-model:value="deviceKeyword"
+        class="yomi-search-input device-input"
+        placeholder="按关键字进行搜索"
+        :allow-clear="true"
+      >
+        <template #suffix>
+          <SvgIcon name="search" />
+        </template>
+      </a-input>
         <div class="status-select">
           <a-select
             v-model:value="statusFilter"
@@ -62,27 +64,24 @@
       </div>
     </header>
 
-    <section class="control-body">
+    <section class="page-body">
       <aside class="filter-panel">
         <a-input
-          v-model:value="areaKeyword"
-          class="panel-search"
-          placeholder="按关键字进行搜索"
-        >
-          <template #suffix>
-            <SvgIcon
-              name="search"
-              width="16"
-              height="16"
-            />
-          </template>
-        </a-input>
+        v-model:value="searchKeyword"
+        class="yomi-search-input"
+        placeholder="按关键字进行搜索"
+        :allow-clear="true"
+      >
+        <template #suffix>
+          <SvgIcon name="search" />
+        </template>
+      </a-input>
         <ul class="area-list">
           <li
             v-for="area in filteredAreas"
             :key="area.value"
             :class="['area-item', { active: selectedArea === area.value }]"
-            @click="selectedArea = area.value"
+            @click="selectedArea = area.value as AreaValue"
           >
             <span
               class="radio"
@@ -158,6 +157,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import SvgIcon from '@/components/SvgIcon.vue'
+import { TabMenu, type TabItem } from '@/components'
 
 type StatusFilter = 'all' | 'online' | 'offline' | 'open' | 'closed'
 type AreaValue = 'all' | 'green' | 'eco' | 'agriculture' | 'production' | 'smart'
@@ -171,13 +171,20 @@ interface DeviceItem {
   area: AreaValue
 }
 
-const equipmentKeyword = ref('')
-const areaKeyword = ref('')
+const activeTab = ref('device-list')
+const tabItems: TabItem[] = [
+  { key: 'device-list', label: '设备列表' },
+  { key: 'smart-control', label: '智能控制' },
+  { key: 'device-config', label: '设备配置' }
+]
+
+const deviceKeyword = ref('')
+const searchKeyword = ref('')
 const statusFilter = ref<StatusFilter>('all')
 const selectedArea = ref<AreaValue>('agriculture')
 
 const statusOptions = [
-  { label: '状态', value: 'all' },
+  { label: '全部', value: '' },
   { label: '在线', value: 'online' },
   { label: '离线', value: 'offline' },
   { label: '开启', value: 'open' },
@@ -205,15 +212,15 @@ const devices = ref<DeviceItem[]>([
 ])
 
 const filteredAreas = computed(() => {
-  if (!areaKeyword.value) return areaFilters
+  if (!searchKeyword.value) return areaFilters
   return areaFilters.filter(area =>
-    area.label.toLowerCase().includes(areaKeyword.value.toLowerCase())
+    area.label.toLowerCase().includes(searchKeyword.value.toLowerCase())
   )
 })
 
 const filteredDevices = computed(() => {
   return devices.value.filter(device => {
-    const keyword = equipmentKeyword.value.trim()
+    const keyword = deviceKeyword.value.trim()
     const matchesKeyword = keyword ? device.name.includes(keyword) : true
     const matchesArea =
       selectedArea.value === 'all' || device.area === selectedArea.value
@@ -245,10 +252,15 @@ const handleToggle = (id: number) => {
 }
 
 const handleReset = () => {
-  equipmentKeyword.value = ''
-  areaKeyword.value = ''
+  deviceKeyword.value = ''
+  searchKeyword.value = ''
   statusFilter.value = 'all'
   selectedArea.value = 'all'
+}
+
+const handleTabChange = (key: string) => {
+  activeTab.value = key
+  // Handle tab change logic here if needed
 }
 </script>
 
@@ -258,18 +270,12 @@ const handleReset = () => {
   flex-direction: column;
   gap: 16px;
   height: 100%;
-  padding: 16px;
-  background: #f3f6ff;
 }
 
-.control-header {
+.page-header {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background: #fff;
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 12px 30px rgba(65, 113, 238, 0.08);
+  align-items: center;
+  justify-content: space-between;
 }
 
 .title-block {
@@ -296,16 +302,8 @@ const handleReset = () => {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-}
-
-.search-input {
-  width: 320px;
-
-  :deep(.ant-input) {
-    border: 1px solid #ebeef5;
-    border-radius: 10px;
-    height: 40px;
-    padding: 0 12px;
+  .device-input{
+    width: 304px;
   }
 }
 
@@ -317,7 +315,9 @@ const handleReset = () => {
   display: flex;
   align-items: center;
   padding: 0 10px;
-
+  border-radius: 8px;
+  border: 0.5px solid  #EBEEF5;
+  background:  #FFF;
   :deep(.ant-select-selector) {
     padding: 0 !important;
     border: none !important;
@@ -328,8 +328,12 @@ const handleReset = () => {
   }
 }
 
+.status-select-dropdown{
+  width: 100%;
+}
 :deep(.status-select-dropdown .ant-select-item-option-content) {
   font-size: 14px;
+  
 }
 
 .ghost-btn {
@@ -343,7 +347,7 @@ const handleReset = () => {
   color: #373f4b;
 }
 
-.control-body {
+.page-body {
   display: flex;
   gap: 12px;
   flex: 1;

@@ -1,19 +1,10 @@
 <template>
   <div class="data-analysis-page">
-    <div class="tab-menu">
-      <a-tabs
-        v-model:activeKey="activeTab"
-        size="small"
-        :animated="false"
-        class="tabs"
-      >
-        <a-tab-pane
-          v-for="item in tabItems"
-          :key="item.key"
-          :tab="item.label"
-        />
-      </a-tabs>
-    </div>
+    <TabMenu
+      :tab-items="tabItems"
+      v-model:active-key="activeTab"
+      @change="handleTabChange"
+    />
 
     <div class="page-header">
       <div class="title-block">
@@ -26,7 +17,7 @@
       </a-button>
     </div>
 
-    <div class="content-area">
+    <div class="page-body">
       <div class="filter-panel">
         <a-input
         v-model:value="searchKeyword"
@@ -163,14 +154,9 @@
 
 <script lang="ts" setup>
 import { computed, ref } from "vue";
-import {
-  FileExcelOutlined,
-  LineChartOutlined,
-  ReloadOutlined,
-  TableOutlined,
-} from "@ant-design/icons-vue";
 import LineChart from "@/components/LineChart.vue";
 import SvgIcon from "@/components/SvgIcon.vue";
+import TabMenu from "@/components/TabMenu.vue";
 
 interface SensorItem {
   id: string;
@@ -322,6 +308,10 @@ const chartSeries = ref(generateSeries());
 const handleRefresh = () => {
   chartSeries.value = generateSeries();
 };
+
+const handleTabChange = (key: string) => {
+  activeTab.value = key;
+};
 </script>
 
 <style scoped lang="less">
@@ -334,35 +324,6 @@ const handleRefresh = () => {
   overflow: hidden;
 }
 
-.tab-menu {
-  display: flex;
-  padding: 4px;
-
-  color: #6d7d95;
-  .tabs {
-    width: 100%;
-  }
-}
-:deep(.tab-menu) {
-  .ant-tabs-nav {
-    margin: 0px;
-    padding-left: 16px;
-  }
-}
-:deep(.tab-menu .ant-tabs-tab) {
-  padding: 12px 32px;
-  & + .ant-tabs-tab {
-    margin: 0px;
-  }
-  &.ant-tabs-tab-active .ant-tabs-tab-btn {
-    color: #4071ef;
-  }
-}
-:deep(.tab-menu .ant-tabs-ink-bar) {
-  border-radius: 6px 6px 0px 0px;
-  background: linear-gradient(315deg, #4171ee 0%, #84a6ff 100%);
-  height: 4px;
-}
 
 .page-header {
   display: flex;
@@ -398,7 +359,7 @@ const handleRefresh = () => {
   border-radius: 8px;
 }
 
-.content-area {
+.page-body {
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: 16px;
